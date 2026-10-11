@@ -12,43 +12,43 @@
 // BATTERY PACK CONFIGURATION
 // ============================================================================
 
-#define NUM_SERIES_CELLS TOTAL_MODULES* CELLS_PER_MOD
-#define NUM_PARALLEL_STRINGS 1
+#define NUM_SERIES_CELLS         TOTAL_MODULES* CELLS_PER_MOD
+#define NUM_PARALLEL_STRINGS     1
 #define NOMINAL_CELL_CAPACITY_AH 12.0f  // 3600mAh cells
-#define PACK_CAPACITY_AS (NUM_SERIES_CELLS * NUM_PARALLEL_STRINGS * NOMINAL_CELL_CAPACITY_AH * 3.6f)
-#define MAX_CELL_VOLTAGE 4.2f
-#define MIN_CELL_VOLTAGE 2.5f
+#define PACK_CAPACITY_AS         (NUM_SERIES_CELLS * NUM_PARALLEL_STRINGS * NOMINAL_CELL_CAPACITY_AH * 3.6f)
+#define MAX_CELL_VOLTAGE         4.2f
+#define MIN_CELL_VOLTAGE         2.5f
 
 // ============================================================================
 // R/C LOOKUP TABLE SIZES
 // ============================================================================
 
 // Grid sizes for 2D lookups (SOC × Temperature)
-#define RC_LUT_SOC_SIZE 10  // 10 SOC points (0.1 to 1.0)
-#define RC_LUT_TEMP_SIZE 2  // 5 temp points (e.g., 0°C, 10°C, 20°C, 30°C, 40°C)
+#define RC_LUT_SOC_SIZE  10  // 10 SOC points (0.1 to 1.0)
+#define RC_LUT_TEMP_SIZE 2   // 5 temp points (e.g., 0°C, 10°C, 20°C, 30°C, 40°C)
 
 // ============================================================================
 // KALMAN FILTER TUNING
 // ============================================================================
 
 // Initial parameter values
-#define INITIAL_R0 0.005f
+#define INITIAL_R0   0.005f
 #define INITIAL_QNOM (NOMINAL_CELL_CAPACITY_AH * 3600.0f)
 
 // Process noise (from MATLAB)
-#define Q_SOC (1e-7f)   //(1000.0f * 1e-4f)
-#define Q_VCT (1e-4f)   //(0.1f * 1e-4f)
+#define Q_SOC  (1e-7f)  //(1000.0f * 1e-4f)
+#define Q_VCT  (1e-4f)  //(0.1f * 1e-4f)
 #define Q_VDIF (1e-5f)  //(0.01f * 1e-4f)
 
 // Measurement noise (from MATLAB)
-#define R_VOLTAGE 1e-3f
+#define R_VOLTAGE    1e-3f
 #define R_SOC_PSEUDO 1e-1f
 
 // Parameter estimation noise (from MATLAB)
-#define Q_R0 1e-11f
+#define Q_R0   1e-11f
 #define Q_QNOM 1e-14f
 
-#define R_PARAM_R0 1.0f
+#define R_PARAM_R0   1.0f
 #define R_PARAM_QNOM 1000.0f
 
 // Innovation window for adaptive covariance
@@ -57,7 +57,7 @@
 // Update rate
 #define SOC_UPDATE_PERIOD_MS 100  // 10 Hz
 
-#define MAX_ALLOWED_DI_DT 40.0f           // Amps per second threshold (adjust to your car)
+#define MAX_ALLOWED_DI_DT         40.0f   // Amps per second threshold (adjust to your car)
 #define MAX_PHYSICAL_INNOVATION_V 0.250f  // 250 mV gate limit
 
 // ============================================================================
@@ -66,9 +66,9 @@
 
 // Flash sector for SOC data storage (STM32G4 specific)
 // Bank 1, Page 127 (last page) - 2KB
-#define FLASH_SOC_STORAGE_PAGE 127
+#define FLASH_SOC_STORAGE_PAGE    127
 #define FLASH_SOC_STORAGE_ADDRESS 0x0803F800UL  // Bank 1, last page
-#define FLASH_SOC_STORAGE_BANK FLASH_BANK_1
+#define FLASH_SOC_STORAGE_BANK    FLASH_BANK_1
 
 // How often to write to flash (every N successful updates)
 #define FLASH_WRITE_INTERVAL 100  // Every 10 seconds at 10Hz
@@ -94,12 +94,12 @@
 // Initial state covariance P (diagonal entries)
 #define KALMAN_INITIAL_P_DIAG 1e-3f
 // Initial parameter covariance P_theta (R0, Qnom)
-#define KALMAN_INITIAL_P_THETA_R0 0.1f
+#define KALMAN_INITIAL_P_THETA_R0   0.1f
 #define KALMAN_INITIAL_P_THETA_QNOM 0.001f
 
 // R/C values used when the lookup tables have not been set
-#define FALLBACK_R_CT 0.003f
-#define FALLBACK_C_CT 1000.0f
+#define FALLBACK_R_CT  0.003f
+#define FALLBACK_C_CT  1000.0f
 #define FALLBACK_R_DIF 0.006f
 #define FALLBACK_C_DIF 100000.0f
 
@@ -113,8 +113,8 @@
 #define KALMAN_MIN_DETERMINANT 1e-10f
 
 // Upper ceilings on adaptive process noise added to Q_SOC / Q_VCT / Q_VDIF
-#define Q_ADAPTIVE_MAX_SOC 1e-5f
-#define Q_ADAPTIVE_MAX_VCT 1e-3f
+#define Q_ADAPTIVE_MAX_SOC  1e-5f
+#define Q_ADAPTIVE_MAX_VCT  1e-3f
 #define Q_ADAPTIVE_MAX_VDIF 1e-4f
 
 // ============================================================================
@@ -140,8 +140,8 @@
 // Sanity limits applied when validating state loaded from flash
 #define PERSIST_SOC_MIN 0.0f
 #define PERSIST_SOC_MAX 1.0f
-#define PERSIST_R0_MIN 0.0f
-#define PERSIST_R0_MAX 1.0f
+#define PERSIST_R0_MIN  0.0f
+#define PERSIST_R0_MAX  1.0f
 // Qnom must be within these factors of INITIAL_QNOM
 #define PERSIST_QNOM_MIN_FACTOR 0.5f
 #define PERSIST_QNOM_MAX_FACTOR 2.0f
@@ -179,7 +179,7 @@
 
 // Grid shared by every table: temperature (degC) and SOC (0-1)
 #define RC_LUT_TEMP_POINTS {25.0f, 26.0f}
-#define RC_LUT_SOC_POINTS {0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.60f, 0.70f, 0.80f, 0.90f, 1.0f}
+#define RC_LUT_SOC_POINTS  {0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.60f, 0.70f, 0.80f, 0.90f, 1.0f}
 
 #define RC_LUT_R_CT_VALUES                                                    \
     {{0.0007293401782525250f, 0.0009074875325995350f, 0.00085638685177882f,   \

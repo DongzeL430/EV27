@@ -10,8 +10,6 @@
  *   5. Temperature sensor lookup
  *   6. Chip-select, SPI and timing
  *   7. ADBMS6830 unique IDs
- *
- * SOC estimator settings live in kalman_soc_config.h.
  */
 
 #ifndef ADBMS_CONFIG_H
@@ -23,11 +21,11 @@
 // 1. PACK TOPOLOGY
 // ============================================================================
 
-#define TOTAL_IC 6
-#define TOTAL_MODULES 6  // E.g., 12 ICs = 6 Segments
-#define TOTAL_CELLS TOTAL_MODULES* CELLS_PER_MOD
-#define TEMP_PER_BOARD 10
-#define VOLT_PER_SLAVE 10
+#define TOTAL_IC        6
+#define TOTAL_MODULES   6  // E.g., 12 ICs = 6 Segments
+#define TOTAL_CELLS     TOTAL_MODULES* CELLS_PER_MOD
+#define TEMP_PER_BOARD  10
+#define VOLT_PER_SLAVE  10
 #define VOLT_PER_MASTER 14
 
 // SOC CHANGES
@@ -42,10 +40,10 @@
 #define CELL_OT_THRESHOLD_C 60.0f  // Overtemperature limit (Celsius)
 
 // Bits of SegmentData_t.fault_flags
-#define FAULT_FLAG_OV 0x01            // Cell overvoltage
-#define FAULT_FLAG_UV 0x02            // Cell undervoltage
-#define FAULT_FLAG_OT 0x04            // Overtemperature
-#define FAULT_FLAG_COMM 0x08          // Communication dropped
+#define FAULT_FLAG_OV           0x01  // Cell overvoltage
+#define FAULT_FLAG_UV           0x02  // Cell undervoltage
+#define FAULT_FLAG_OT           0x04  // Overtemperature
+#define FAULT_FLAG_COMM         0x08  // Communication dropped
 #define FAULT_FLAG_TEMP_SENSORS 0x10  // Too few working temperature sensors
 
 // Consecutive bad cycles before a communication fault is latched
@@ -54,7 +52,7 @@
 #define COMM_MISS_COUNT_MAX 255
 
 // A segment faults when (working sensor fraction * TEMP_COVERAGE_FACTOR) < MIN_CELL_THRESH
-#define MIN_CELL_THRESH 0.2
+#define MIN_CELL_THRESH      0.2
 #define TEMP_COVERAGE_FACTOR 0.5
 // Cells lost per dead temperature sensor when checking coverage
 #define TEMP_DROPOUT_DEAD_CELLS 2
@@ -74,7 +72,7 @@
 // the master IC drives the first cells, the slave IC the rest
 #define BAL_MASTER_DCC_MASK 0x3FFF  // Bits 0-13
 #define BAL_SLAVE_DCC_SHIFT 14
-#define BAL_SLAVE_DCC_MASK 0x03FF  // Bits 14-23 shifted down
+#define BAL_SLAVE_DCC_MASK  0x03FF  // Bits 14-23 shifted down
 
 // ============================================================================
 // 4. MEASUREMENT CONVERSION
@@ -97,9 +95,9 @@
 #define TEMP_SENSOR_FAULT_C (-99.0f)
 
 // Maps voltages to temperatures from -40C to +120C in 5C steps
-#define TEMP_TABLE_SIZE 33
-#define TEMP_TABLE_MIN_C (-40.0f)
-#define TEMP_TABLE_MAX_C 120.0f
+#define TEMP_TABLE_SIZE   33
+#define TEMP_TABLE_MIN_C  (-40.0f)
+#define TEMP_TABLE_MAX_C  120.0f
 #define TEMP_TABLE_STEP_C 5.0f
 
 // Above this voltage (V) the sensor is probably floating / disconnected
@@ -117,12 +115,12 @@
 // 6. CHIP-SELECT, SPI AND TIMING
 // ============================================================================
 
-#define CS_PIN GPIO_PIN_6 /* Mcu dependent chip select */
-#define GPIO_PORT GPIOB   /* Mcu dependent adc chip select port */
+#define CS_PIN    GPIO_PIN_6 /* Mcu dependent chip select */
+#define GPIO_PORT GPIOB      /* Mcu dependent adc chip select port */
 
-#define SPI_TIME_OUT 500            /* SPI Time out delay   */
+#define SPI_TIME_OUT  500           /* SPI Time out delay   */
 #define UART_TIME_OUT HAL_MAX_DELAY /* UART Time out delay  */
-#define I2C_TIME_OUT HAL_MAX_DELAY  /* I2C Time out delay   */
+#define I2C_TIME_OUT  HAL_MAX_DELAY /* I2C Time out delay   */
 
 // Bytes of command and PEC that precede the data on every SPI transaction
 #define ADBMS_CMD_HEADER_BYTES 4
@@ -137,7 +135,7 @@
 // Configuration register defaults
 #define ADBMS_GPO_DEFAULT 0X3FF
 // Balancing PWM registers
-#define ADBMS_PWM_DATA_BYTES 6
+#define ADBMS_PWM_DATA_BYTES    6
 #define ADBMS_PWMA_DEFAULT_DATA {0x44, 0x44, 0x44, 0x44, 0x44, 0x44}  // Cells 1-8 at 50%
 #define ADBMS_PWMB_DEFAULT_DATA \
     {0x44, 0x44, 0x44, 0x44, 0x44, 0x44}  // Cells 9-10 at 50%, 11-16 at 0%
@@ -148,19 +146,19 @@
 
 // Unique 48 Bit IDs. IDs 1-7 are the top boards, 8-14 the bottom boards
 #define ADBMS_TOP_BOARD_ID_MAX 7
-#define ID1_TOP 0x97DE40006B21ULL
-#define ID2_TOP 0x997CE40586B2ULL
-#define ID3_TOP 0x097EE40006B2ULL
-#define ID4_TOP 0x990DE40686B2ULL
-#define ID5_TOP 0xC97DE40506B2ULL
-#define ID6_TOP 0x590EE40586B2ULL
-#define ID7_TOP 0x9A06E40606B2ULL
-#define ID1_BOTTOM 0x0001111111ULL
-#define ID2_BOTTOM 0x0002111111ULL
-#define ID3_BOTTOM 0x0003111111ULL
-#define ID4_BOTTOM 0x0004111111ULL
-#define ID5_BOTTOM 0x0005111111ULL
-#define ID6_BOTTOM 0x0006111111ULL
-#define ID7_BOTTOM 0x0001111111ULL
+#define ID1_TOP                0x97DE40006B21ULL
+#define ID2_TOP                0x997CE40586B2ULL
+#define ID3_TOP                0x097EE40006B2ULL
+#define ID4_TOP                0x990DE40686B2ULL
+#define ID5_TOP                0xC97DE40506B2ULL
+#define ID6_TOP                0x590EE40586B2ULL
+#define ID7_TOP                0x9A06E40606B2ULL
+#define ID1_BOTTOM             0x0001111111ULL
+#define ID2_BOTTOM             0x0002111111ULL
+#define ID3_BOTTOM             0x0003111111ULL
+#define ID4_BOTTOM             0x0004111111ULL
+#define ID5_BOTTOM             0x0005111111ULL
+#define ID6_BOTTOM             0x0006111111ULL
+#define ID7_BOTTOM             0x0001111111ULL
 
 #endif  // ADBMS_CONFIG_H

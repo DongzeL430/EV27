@@ -241,9 +241,9 @@ const uint8_t InfoTypeData[17][6] = {
     {DOUBLE, 60, 115, 105, 97, 89}  // PACK_VOLTAGE,
 };
 
-#define PROGRESS_BAR_Y 52
-#define PROGRESS_BAR_X 2
-#define PROGRESS_BAR_WIDTH 65
+#define PROGRESS_BAR_Y      52
+#define PROGRESS_BAR_X      2
+#define PROGRESS_BAR_WIDTH  65
 #define PROGRESS_BAR_HEIGHT 3
 
 ///////////

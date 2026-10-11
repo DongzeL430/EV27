@@ -7,9 +7,6 @@
  *   2. Reset / fault recovery
  *   3. FDCAN receive filter
  *   4. Debug console
- *
- * Kept outside the CubeMX-generated blocks so it survives regenerating from the .ioc.
- * Included from the USER CODE section of main.h.
  */
 
 #ifndef CORE_CONFIG_H
@@ -74,8 +71,8 @@
 // One mask filter (FilterID1 = filter, FilterID2 = mask). ID and mask of 0
 // accept every standard-ID frame into RX FIFO0.
 #define CAN_RX_FILTER_INDEX 0
-#define CAN_RX_FILTER_ID 0x000
-#define CAN_RX_FILTER_MASK 0x000
+#define CAN_RX_FILTER_ID    0x000
+#define CAN_RX_FILTER_MASK  0x000
 
 // ============================================================================
 // 4. DEBUG CONSOLE

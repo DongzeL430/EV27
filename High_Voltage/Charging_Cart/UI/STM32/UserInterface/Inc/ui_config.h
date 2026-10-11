@@ -7,9 +7,6 @@
  *   2. Rotary encoder
  *   3. User-editable values
  *   4. Fault display
- *
- * The screen layout, fonts and background bitmap are generated from the UI template and
- * live in interfaceTemplate.h.
  */
 
 #ifndef UI_CONFIG_H
@@ -19,10 +16,10 @@
 // 1. DISPLAY HARDWARE
 // ============================================================================
 
-#define FULL_REFRESH 0b11111111
-#define SCREEN_WIDTH 128
+#define FULL_REFRESH  0b11111111
+#define SCREEN_WIDTH  128
 #define SCREEN_HEIGHT 64
-#define PAGE_SIZE 8
+#define PAGE_SIZE     8
 
 // Backlight PWM duty (compare value)
 #define UI_BACKLIGHT_BRIGHTNESS 255
@@ -31,20 +28,20 @@
 #define DISPLAY_RESET_DELAY_MS 10
 
 // DISPLAY COMMANDS https://www.hpinfotech.ro/ST7565.pdf
-#define CMD_DISPLAY_OFF 0b10101110
-#define CMD_DISPLAY_ON 0b10101111
+#define CMD_DISPLAY_OFF    0b10101110
+#define CMD_DISPLAY_ON     0b10101111
 #define CMD_DISPLAY_ALL_ON 0b10100101
 
 // initialization commands
-#define CMD_LCD_BIAS 0b10100010
-#define CMD_ADC_SELECT 0b10100000   // 0b10100000 for normal, 0b10100001 for reverse
-#define CMD_COM_OUTPUT 0b11001000   // 0b11000000 for normal, 0b11001000 for reverse
+#define CMD_LCD_BIAS    0b10100010
+#define CMD_ADC_SELECT  0b10100000  // 0b10100000 for normal, 0b10100001 for reverse
+#define CMD_COM_OUTPUT  0b11001000  // 0b11000000 for normal, 0b11001000 for reverse
 #define CMD_REG_DIVIDER 0b00100101  // last three bits are the ratio
 #define CMD_VOLUME_MODE 0b10000001
-#define CMD_SET_VOLUME 0b00011011  // last five bits are volume level
-#define CMD_POWER_CNFG 0b00101111  // all stages enabled (last three bits)
+#define CMD_SET_VOLUME  0b00011011  // last five bits are volume level
+#define CMD_POWER_CNFG  0b00101111  // all stages enabled (last three bits)
 
-#define CMD_SET_PAGE_0 0b10110000   // last four bits are page number
+#define CMD_SET_PAGE_0  0b10110000  // last four bits are page number
 #define CMD_SET_COL_U_0 0b00010000  // last four bits are upper col address
 #define CMD_SET_COL_L_0 0b00000000  // last four bits are lower
 
@@ -92,14 +89,14 @@
         "BSM FAULT", "BSM CAN T\\O", "SDC", "CELL O\\V"
 
 #define FAULT_MSG_UNKNOWN "UNKNOWN ERROR"
-#define FAULT_MSG_PREFIX "ERR"
+#define FAULT_MSG_PREFIX  "ERR"
 // Character offset of the fault message on the status line
 #define FAULT_MSG_OFFSET 4
 
 // "[ \ ]" counter showing which fault is displayed out of how many
-#define FAULT_COUNT_BRACKETS "[ \\ ]"
+#define FAULT_COUNT_BRACKETS        "[ \\ ]"
 #define FAULT_COUNT_BRACKETS_OFFSET 16
-#define FAULT_COUNT_INDEX_OFFSET 17
-#define FAULT_COUNT_TOTAL_OFFSET 19
+#define FAULT_COUNT_INDEX_OFFSET    17
+#define FAULT_COUNT_TOTAL_OFFSET    19
 
 #endif  // UI_CONFIG_H

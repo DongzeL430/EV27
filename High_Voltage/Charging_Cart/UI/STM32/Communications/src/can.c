@@ -30,8 +30,9 @@ void cell_soc_parsing(uint32_t id, SegmentData_t* bms_data, uint8_t* rx_data) {
 }
 
 void elcon_to_charger_parsing(uint8_t* rx_data, uint8_t dlc) {
-    if (dlc < ELCON_RX_MIN_DLC) return;  // Not enough data for voltage, current, and status
-
+    if (dlc < ELCON_RX_MIN_DLC) {
+        return;  // Not enough data for voltage, current, and status
+    }
     CAN_Info.elconVoltage = (((uint16_t)rx_data[0]) << 8) | rx_data[1];
     CAN_Info.elconCurrent = (((uint16_t)rx_data[2]) << 8) | rx_data[3];
     CAN_Info.elconStatus = rx_data[4];
@@ -154,7 +155,7 @@ HAL_StatusTypeDef CAN_SendData(CAN_HandleTypeDef* hcan, uint32_t id, uint8_t* da
 
 // output in mV
 uint16_t cell_voltage_conversion(uint8_t raw_value) {
-    return ((uint16_t)raw_value) * CELL_V_STEP_MV + CELL_V_OFFSET_MV;
+    return (((uint16_t)raw_value) * CELL_V_STEP_MV) + CELL_V_OFFSET_MV;
 }
 
 // output in 0.01C

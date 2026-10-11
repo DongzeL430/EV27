@@ -6,9 +6,6 @@
  *   1. Main loop
  *   2. Reset / fault recovery
  *   3. CAN receive filter
- *
- * Kept outside the CubeMX-generated blocks so it survives regenerating from the .ioc.
- * Included from the USER CODE section of main.h.
  */
 
 #ifndef CORE_CONFIG_H
@@ -41,11 +38,11 @@
 // ============================================================================
 
 // One mask filter; ID and mask of 0 accept every frame into FIFO0
-#define CAN_FILTER_BANK 0
-#define CAN_FILTER_ID_HIGH 0x0000
-#define CAN_FILTER_ID_LOW 0x0000
-#define CAN_FILTER_MASK_ID_HIGH 0x0000
-#define CAN_FILTER_MASK_ID_LOW 0x0000
+#define CAN_FILTER_BANK             0
+#define CAN_FILTER_ID_HIGH          0x0000
+#define CAN_FILTER_ID_LOW           0x0000
+#define CAN_FILTER_MASK_ID_HIGH     0x0000
+#define CAN_FILTER_MASK_ID_LOW      0x0000
 #define CAN_SLAVE_START_FILTER_BANK 20
 
 #endif  // CORE_CONFIG_H

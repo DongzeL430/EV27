@@ -1,10 +1,6 @@
 /**
  * @file bsm_config.h
  * @brief Tunable values for the battery state machine (BSM)
- *
- * Everything the BSM uses that you might reasonably want to retune (timeouts,
- * precharge voltage window) lives here instead of being scattered through
- * bsm.c.
  */
 
 #ifndef BSM_CONFIG_H

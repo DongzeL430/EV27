@@ -165,7 +165,12 @@ jobs:
           # Pinned to match .pre-commit-config.yaml; nested configs use
           # ExcludeHeaderFilterRegex, which needs clang-tidy 19+.
           version: '21'
-          extra-args: '${{ steps.arm-inc.outputs.args }}'
+          # One key only: GitHub rejects a workflow with duplicate keys (it
+          # never starts, so CPP Lint Gate waits forever). Space-separated;
+          # cpp-linter passes each piece to clang-tidy as its own --extra-arg.
+          #   --gcc-toolchain  see "Resolve ARM GCC toolchain root" above
+          #   arm-inc args     see "Find ARM C/C++ library headers" above
+          extra-args: '--gcc-toolchain=${{ steps.arm-gcc-root.outputs.root }} ${{ steps.arm-inc.outputs.args }}'
           database: ${{ matrix.path }}/build/Debug
           files-changed-only: true
           # Only gate on lines this PR actually touches, not pre-existing
@@ -216,6 +221,10 @@ jobs:
 
       - name: Post clang-tidy review comments
         if: steps.tidy-fixes.outputs.found == 'true'
+        # Advisory only; "Fail on lint errors" below is what gates the PR.
+        # GitHub rejects review comments (HTTP 422) when a PR's diff is too
+        # large to anchor them, which shouldn't fail the lint job.
+        continue-on-error: true
         uses: platisd/clang-tidy-pr-comments@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -11,13 +11,20 @@ Checks: >
   -readability-braces-around-statements,
   -readability-math-missing-parentheses,
   -readability-isolate-declaration,
+  -readability-redundant-declaration,
   readability-identifier-naming
+# redundant-declaration: CubeMX writes `extern` handle declarations (hadc1,
+# hdma_adc1, ...) into generated files like stm32g4xx_it.c on every regen.
 
 # Lint our own headers, never STM32 HAL/CMSIS.
 HeaderFilterRegex: '.*/Tractive_Battery/(BSM|Communications|ADBMS6830|Core/Inc)/.*'
 ExcludeHeaderFilterRegex: '.*/(Drivers|ADBMS6830/lib)/.*'
 
 CheckOptions:
+  # bsm_run (state machine), Process_Board_Data and CubeMX's HAL_ADC_MspInit
+  # land at 32-40, over the default of 25, by design.
+  readability-function-cognitive-complexity.Threshold: 50
+
   # Keep integer narrowing (float -> int8_t, uint8_t -> int8_t), but don't
   # flag float literals like `2.44` in float tables or int -> float math.
   bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false

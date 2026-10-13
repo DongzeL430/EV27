@@ -1,4 +1,7 @@
 BasedOnStyle: Google
 ColumnLimit: 100
 IndentWidth: 4
-AlignConsecutiveMacros: Consecutive
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true

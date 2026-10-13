@@ -24,6 +24,9 @@ CheckOptions:
   # bsm_run (state machine), Process_Board_Data and CubeMX's HAL_ADC_MspInit
   # land at 32-40, over the default of 25, by design.
   readability-function-cognitive-complexity.Threshold: 50
+  # Don't score code expanded from macros: each RUN_EVERY(...) in main()'s
+  # scheduler loop is a hidden for + ?: worth 5 points.
+  readability-function-cognitive-complexity.IgnoreMacros: true
 
   # Keep integer narrowing (float -> int8_t, uint8_t -> int8_t), but don't
   # flag float literals like `2.44` in float tables or int -> float math.

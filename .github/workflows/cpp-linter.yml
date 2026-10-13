@@ -73,12 +73,16 @@ jobs:
           if [ "${{ steps.filter.outputs.Tractive_Battery }}" = "true" ]; then
             path='High_Voltage/Tractive_Battery'
             ignore=".github|$non_firmware|$path/Drivers|$path/cmake/stm32cubemx|$(echo "$all_paths" | tr '|' '\n' | grep -vF "$path" | paste -sd'|')"
+            # CubeMX's HAL config header can't be parsed on its own
+            ignore="$ignore|$path/Core/Inc/stm32g4xx_hal_conf.h"
             matrix=$(echo "$matrix" | jq -c --arg path "$path" --arg ignore "$ignore" \
               '. + [{"project":"Tractive_Battery","path":$path,"ignore":$ignore}]')
           fi
           if [ "${{ steps.filter.outputs.Charging_Cart_UI }}" = "true" ]; then
             path='High_Voltage/Charging_Cart/UI/STM32'
             ignore=".github|$non_firmware|$path/Drivers|$path/cmake/stm32cubemx|$(echo "$all_paths" | tr '|' '\n' | grep -vF "$path" | paste -sd'|')"
+            # CubeMX's HAL config header can't be parsed on its own
+            ignore="$ignore|$path/Core/Inc/stm32f0xx_hal_conf.h"
             matrix=$(echo "$matrix" | jq -c --arg path "$path" --arg ignore "$ignore" \
               '. + [{"project":"Charging_Cart_UI","path":$path,"ignore":$ignore}]')
           fi
@@ -198,18 +202,24 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           # changed C/C++ files in this project, minus vendor/CubeMX code
-          FILE_REGEX: ${{ matrix.path }}/(?!Drivers/|cmake/stm32cubemx/).*\.(c|cc|cpp|cxx|h|hpp)
+          FILE_REGEX: ${{ matrix.path }}/(?!Drivers/|cmake/stm32cubemx/|Core/Inc/stm32\w+_hal_conf\.h$).*\.(c|cc|cpp|cxx|h|hpp)
+          ARM_INC_ARGS: ${{ steps.arm-inc.outputs.args }}
         run: |
           pip install clang-tidy==21.1.6 pyyaml
           curl -fsSL -o clang-tidy-diff.py \
             https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-21.1.6/clang-tools-extra/clang-tidy/tool/clang-tidy-diff.py
           mkdir -p clang-tidy-result
+          # Same ARM header dirs the Lint step gets, else <cstdint> etc.
+          # are "file not found" in C++ files
+          inc_args=()
+          for a in $ARM_INC_ARGS; do inc_args+=("-extra-arg=$a"); done
           git diff -U0 "$(git merge-base HEAD "$BASE_SHA")" \
             | python3 clang-tidy-diff.py -p1 \
                 -clang-tidy-binary "$(command -v clang-tidy)" \
                 -path "${{ matrix.path }}/build/Debug" \
                 -iregex "$FILE_REGEX" \
                 -extra-arg=--gcc-toolchain=${{ steps.arm-gcc-root.outputs.root }} \
+                "${inc_args[@]}" \
                 -export-fixes clang-tidy-result/fixes.yml || true
           # clang-tidy-diff writes nothing when no relevant lines changed
           if [ -s clang-tidy-result/fixes.yml ]; then

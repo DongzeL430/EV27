@@ -136,7 +136,7 @@ static float interp1d(const float* x, const float* y, uint16_t size, float xi) {
 
 void KalmanSOC_Init(KalmanSOC* kf, float initial_soc) {
     // MATLAB: obj.x = [0.3;0;0];
-    kf->x.soc = (initial_soc >= 0.0f) ? initial_soc : 0.3f;
+    kf->x.soc = (initial_soc >= 0.0f) ? initial_soc : KALMAN_DEFAULT_INITIAL_SOC;
     kf->x.v_ct = 0.0f;
     kf->x.v_dif = 0.0f;
 
@@ -145,21 +145,21 @@ void KalmanSOC_Init(KalmanSOC* kf, float initial_soc) {
     kf->theta.q_nom = INITIAL_QNOM;
 
     // MATLAB: obj.p = [1e-3 0 0;0 1e-3 0;0 0 1e-3];
-    kf->P.data[0][0] = 1e-3f;
+    kf->P.data[0][0] = KALMAN_INITIAL_P_DIAG;
     kf->P.data[0][1] = 0.0f;
     kf->P.data[0][2] = 0.0f;
     kf->P.data[1][0] = 0.0f;
-    kf->P.data[1][1] = 1e-3f;
+    kf->P.data[1][1] = KALMAN_INITIAL_P_DIAG;
     kf->P.data[1][2] = 0.0f;
     kf->P.data[2][0] = 0.0f;
     kf->P.data[2][1] = 0.0f;
-    kf->P.data[2][2] = 1e-3f;
+    kf->P.data[2][2] = KALMAN_INITIAL_P_DIAG;
 
     // MATLAB: obj.p_theta = [0.1 0; 0 0.001];
-    kf->P_theta.data[0][0] = 0.1f;
+    kf->P_theta.data[0][0] = KALMAN_INITIAL_P_THETA_R0;
     kf->P_theta.data[0][1] = 0.0f;
     kf->P_theta.data[1][0] = 0.0f;
-    kf->P_theta.data[1][1] = 0.001f;
+    kf->P_theta.data[1][1] = KALMAN_INITIAL_P_THETA_QNOM;
 
     // MATLAB: obj.k = zeros(3,2);
     memset(kf->k, 0, sizeof(kf->k));
@@ -203,10 +203,10 @@ void KalmanSOC_Init(KalmanSOC* kf, float initial_soc) {
     kf->t = 0.0f;
 
     // MATLAB: obj.z = 0.3;
-    kf->z = 0.3f;
+    kf->z = KALMAN_INITIAL_Z;
 
     // NEW: SOH initialization
-    kf->soh_est = 1.0f;  // 100% SOH initially
+    kf->soh_est = KALMAN_INITIAL_SOH;
 
     // NEW: R/C lookup tables (NULL until set)
     /*
@@ -311,11 +311,12 @@ bool KalmanSOC_ValidatePersistentState(const KalmanSOC_PersistentState* persiste
     }
 
     // Sanity checks
-    if (persistent->soc < 0.0f || persistent->soc > 1.0f) return false;
-    if (persistent->r0 < 0.0f || persistent->r0 > 1.0f) return false;
-    if (persistent->q_nom < 0.5f * INITIAL_QNOM || persistent->q_nom > 2.0f * INITIAL_QNOM)
+    if (persistent->soc < PERSIST_SOC_MIN || persistent->soc > PERSIST_SOC_MAX) return false;
+    if (persistent->r0 < PERSIST_R0_MIN || persistent->r0 > PERSIST_R0_MAX) return false;
+    if (persistent->q_nom < PERSIST_QNOM_MIN_FACTOR * INITIAL_QNOM ||
+        persistent->q_nom > PERSIST_QNOM_MAX_FACTOR * INITIAL_QNOM)
         return false;
-    if (persistent->soh_est < 0.5f || persistent->soh_est > 1.5f) return false;
+    if (persistent->soh_est < SOH_MIN || persistent->soh_est > SOH_MAX) return false;
 
     return true;
 }
@@ -341,9 +342,9 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
     // Place this near the top of the update function
     float dt = t_new - kf->t;
     float current_derivative = 0.0f;
-    if (dt > 1e-5f) {
-        current_derivative = (i - kf->i_prev) / dt;
-    }
+    // if (dt > KALMAN_MIN_DT_S) {
+    //     current_derivative = (i - kf->i_prev) / dt;
+    // }
 
     // Get R/C values from lookup tables (temperature compensated)
     float R_ct, C_ct, R_dif, C_dif;
@@ -357,10 +358,10 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
         C_dif = interp2d(kf->c_dif_lut, kf->x.soc, T);
     } else {
         // Fallback to fixed values if lookups not set
-        R_ct = 0.003f;
-        C_ct = 1000.0f;
-        R_dif = 0.006f;
-        C_dif = 100000.0f;
+        R_ct = FALLBACK_R_CT;
+        C_ct = FALLBACK_C_CT;
+        R_dif = FALLBACK_R_DIF;
+        C_dif = FALLBACK_C_DIF;
     }
 
     // MATLAB: obj.a = [1 0 0;0 exp(-(t_new-obj.t)/(R_ct*C_ct)) 0; 0 0
@@ -407,8 +408,8 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
     // MATLAB: obj.b = [(t_new-obj.t)/obj.theta(2); -1*R_ct*(1-exp(...)); -1*R_dif*(1-exp(...))];
     float b[3];
     b[0] = (t_new - kf->t) / kf->theta.q_nom;
-    b[1] = -1.0f * R_ct * (1.0f - expf(-(t_new - kf->t) / (R_ct * C_ct)));
-    b[2] = -1.0f * R_dif * (1.0f - expf(-(t_new - kf->t) / (R_dif * C_dif)));
+    b[1] = 1.0f * R_ct * (1.0f - expf(-(t_new - kf->t) / (R_ct * C_ct)));
+    b[2] = 1.0f * R_dif * (1.0f - expf(-(t_new - kf->t) / (R_dif * C_dif)));
 
     // MATLAB: obj.x = obj.predX(obj.a,obj.x,obj.b,obj.I_prev);
     float x_pred[3];
@@ -531,7 +532,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
         }
     }
 
-    kf->c_theta[0][0] = i + c_dx[0][0];
+    kf->c_theta[0][0] = -i + c_dx[0][0];
     kf->c_theta[0][1] = 0.0f + c_dx[0][1];
     kf->c_theta[1][0] = 0.0f + c_dx[1][0];
     kf->c_theta[1][1] = 0.0f + c_dx[1][1];
@@ -563,7 +564,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
         estimate->capacity_ah = kf->theta.q_nom / 3600.0f;
         estimate->soh_percent = kf->soh_est * 100.0f;
         estimate->valid = true;
-        estimate->confidence = sqrt(fabsf(kf->P.data[1][1]));
+        estimate->uncertainty = sqrtf(fabsf(kf->P.data[1][1]));
         return true;
     }
     // MATLAB: obj.I_prev = double(i);
@@ -606,7 +607,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
     s[1][1] = cpct[1][1] + r[1][1];
 
     float det = s[0][0] * s[1][1] - s[0][1] * s[1][0];
-    if (fabsf(det) < 1e-10f) return false;
+    if (fabsf(det) < KALMAN_MIN_DETERMINANT) return false;
 
     float s_inv[2][2];
     s_inv[0][0] = s[1][1] / det;
@@ -679,26 +680,27 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
         sum += kf->innovation_window[i] * kf->innovation_window[i];
     }
     float D = sum / INNOVATION_WINDOW_SIZE;
-
-    // Calculate the raw adaptive variance contribution (K * D * K')
-    // We only compute the diagonal elements to maintain filter stability
-    // and prevent unmodeled cross-correlations from causing divergence.
-    float q_adaptive_soc = kf->k[0][0] * D * kf->k[0][0] + kf->k[0][1] * D * kf->k[0][1];
-    float q_adaptive_vct = kf->k[1][0] * D * kf->k[1][0] + kf->k[1][1] * D * kf->k[1][1];
-    float q_adaptive_vdif = kf->k[2][0] * D * kf->k[2][0] + kf->k[2][1] * D * kf->k[2][1];
-
-    // Enforce strict upper ceilings on how much noise the filter can adaptively add
-    // This prevents the filter from entering a runaway feedback loop under heavy load
-    if (q_adaptive_soc > 1e-5f) q_adaptive_soc = 1e-5f;
-    if (q_adaptive_vct > 1e-3f) q_adaptive_vct = 1e-3f;
-    if (q_adaptive_vdif > 1e-4f) q_adaptive_vdif = 1e-4f;
-
-    // Clear the matrix and apply baseline constants + bounded adaptive adjustments
-    memset(kf->q_fixed, 0, sizeof(kf->q_fixed));
-    kf->q_fixed[0][0] = Q_SOC + q_adaptive_soc;
-    kf->q_fixed[1][1] = Q_VCT + q_adaptive_vct;
-    kf->q_fixed[2][2] = Q_VDIF + q_adaptive_vdif;
     /*
+        // Calculate the raw adaptive variance contribution (K * D * K')
+        // We only compute the diagonal elements to maintain filter stability
+        // and prevent unmodeled cross-correlations from causing divergence.
+        float q_adaptive_soc = kf->k[0][0] * D * kf->k[0][0] + kf->k[0][1] * D * kf->k[0][1];
+        float q_adaptive_vct = kf->k[1][0] * D * kf->k[1][0] + kf->k[1][1] * D * kf->k[1][1];
+        float q_adaptive_vdif = kf->k[2][0] * D * kf->k[2][0] + kf->k[2][1] * D * kf->k[2][1];
+
+        // Enforce strict upper ceilings on how much noise the filter can adaptively add
+        // This prevents the filter from entering a runaway feedback loop under heavy load
+        if (q_adaptive_soc > Q_ADAPTIVE_MAX_SOC) q_adaptive_soc = Q_ADAPTIVE_MAX_SOC;
+        if (q_adaptive_vct > Q_ADAPTIVE_MAX_VCT) q_adaptive_vct = Q_ADAPTIVE_MAX_VCT;
+        if (q_adaptive_vdif > Q_ADAPTIVE_MAX_VDIF) q_adaptive_vdif = Q_ADAPTIVE_MAX_VDIF;
+
+        // Clear the matrix and apply baseline constants + bounded adaptive adjustments
+        memset(kf->q_fixed, 0, sizeof(kf->q_fixed));
+        kf->q_fixed[0][0] = Q_SOC + q_adaptive_soc;
+        kf->q_fixed[1][1] = Q_VCT + q_adaptive_vct;
+        kf->q_fixed[2][2] = Q_VDIF + q_adaptive_vdif;
+    */
+
     // MATLAB: obj.q_fixed = obj.k*obj.D*obj.k';
     float k_D[3][2];
     for (int i = 0; i < 3; i++) {
@@ -715,7 +717,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
             }
         }
     }
-    */
+
     // MATLAB: Parameter update
     float r_theta[2][2];
     r_theta[0][0] = R_PARAM_R0;
@@ -750,7 +752,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
     s_theta[1][1] = c_theta_p_ct[1][1] + r_theta[1][1];
 
     det = s_theta[0][0] * s_theta[1][1] - s_theta[0][1] * s_theta[1][0];
-    if (fabsf(det) < 1e-10f) return false;
+    if (fabsf(det) < KALMAN_MIN_DETERMINANT) return false;
 
     float s_theta_inv[2][2];
     s_theta_inv[0][0] = s_theta[1][1] / det;
@@ -819,8 +821,8 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
         kf->soh_est = 1.0f + (kf->theta.r0 - r0_expected) / r0_expected;
 
         // Clamp SOH to reasonable range
-        if (kf->soh_est < 0.5f) kf->soh_est = 0.5f;
-        if (kf->soh_est > 1.5f) kf->soh_est = 1.5f;
+        if (kf->soh_est < SOH_MIN) kf->soh_est = SOH_MIN;
+        if (kf->soh_est > SOH_MAX) kf->soh_est = SOH_MAX;
     }
 
     // Output
@@ -833,7 +835,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
     estimate->capacity_ah = kf->theta.q_nom / 3600.0f;
     estimate->soh_percent = kf->soh_est * 100.0f;
     estimate->valid = true;
-    estimate->confidence = sqrt(fabsf(kf->P.data[1][1]));
+    estimate->uncertainty = sqrtf(fabsf(kf->P.data[1][1]));
 
     return true;
 }
@@ -854,7 +856,7 @@ void KalmanSOC_GetEstimate(const KalmanSOC* kf, SOC_Estimate* estimate) {
     estimate->capacity_ah = kf->theta.q_nom / 3600.0f;
     estimate->soh_percent = kf->soh_est * 100.0f;
     estimate->valid = kf->initialized;
-    estimate->confidence = 1.0f;
+    estimate->uncertainty = 1.0f;
 }
 
 bool KalmanSOC_IsHealthy(const KalmanSOC* kf) { return kf->initialized; }

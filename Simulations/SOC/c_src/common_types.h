@@ -3,7 +3,7 @@
 #define COMMON_TYPES_H
 
 #define CELLS_PER_MOD 10
-#define TEMP_PER_MOD 10
+#define TEMP_PER_MOD  10
 
 #include <stdbool.h>
 #include <stdint.h>

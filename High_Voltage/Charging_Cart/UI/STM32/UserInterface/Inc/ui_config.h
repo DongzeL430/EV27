@@ -50,7 +50,7 @@
 // ============================================================================
 
 // Valid transitions needed to register one detent
-#define DETENT_THRESHOLD 4
+#define DETENT_THRESHOLD           4
 // Presses closer together than this are ignored (ms)
 #define ENCODER_BUTTON_DEBOUNCE_MS 1000
 

@@ -47,7 +47,7 @@
 #define FAULT_FLAG_TEMP_SENSORS 0x10  // Too few working temperature sensors
 
 // Consecutive bad cycles before a communication fault is latched
-#define COMM_FAULT_LATCH 3  // consecutive bad cycles before hard fault
+#define COMM_FAULT_LATCH    3  // consecutive bad cycles before hard fault
 // Saturation value for the per-segment bad-cycle counter
 #define COMM_MISS_COUNT_MAX 255
 

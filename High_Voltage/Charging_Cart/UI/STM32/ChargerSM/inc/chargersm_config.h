@@ -34,7 +34,7 @@
 // ============================================================================
 
 // Automatic mode balances once pack voltage passes this fraction of the voltage limit...
-#define BALANCING_THRESH 0.9f
+#define BALANCING_THRESH     0.9f
 // ...and only re-arms balancing after it falls below this fraction
 #define BALANCING_THRESH_MIN 0.85f
 

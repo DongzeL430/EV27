@@ -34,8 +34,8 @@
 #define CAN_NOTIFICATION_ERROR 1
 #define ADC_ERROR              2
 // Init and STM Errors
-#define INIT_CAN_SEND_ERROR 0
-#define INIT_ERROR          1
+#define INIT_CAN_SEND_ERROR    0
+#define INIT_ERROR             1
 
 // ============================================================================
 // 3. MESSAGE IDS

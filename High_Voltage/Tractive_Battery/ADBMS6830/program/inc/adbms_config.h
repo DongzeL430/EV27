@@ -52,8 +52,8 @@
 #define COMM_MISS_COUNT_MAX 255
 
 // A segment faults when (working sensor fraction * TEMP_COVERAGE_FACTOR) < MIN_CELL_THRESH
-#define MIN_CELL_THRESH      0.2
-#define TEMP_COVERAGE_FACTOR 0.5
+#define MIN_CELL_THRESH         0.2
+#define TEMP_COVERAGE_FACTOR    0.5
 // Cells lost per dead temperature sensor when checking coverage
 #define TEMP_DROPOUT_DEAD_CELLS 2
 

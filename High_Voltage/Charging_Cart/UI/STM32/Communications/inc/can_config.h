@@ -28,7 +28,7 @@
 // ============================================================================
 
 // Send Errors
-#define CHARGER_TO_PACK_ERROR 0
+#define CHARGER_TO_PACK_ERROR  0
 // Receive Errors
 #define CAN_RECEPTION_ERROR    0
 #define CAN_NOTIFICATION_ERROR 1

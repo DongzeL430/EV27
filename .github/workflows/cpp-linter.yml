@@ -218,6 +218,10 @@ jobs:
 
       - name: Post clang-tidy review comments
         if: steps.tidy-fixes.outputs.found == 'true'
+        # Advisory only; "Fail on lint errors" below is what gates the PR.
+        # GitHub rejects review comments (HTTP 422) when a PR's diff is too
+        # large to anchor them, which shouldn't fail the lint job.
+        continue-on-error: true
         uses: platisd/clang-tidy-pr-comments@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

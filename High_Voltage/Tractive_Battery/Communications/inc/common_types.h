@@ -78,7 +78,7 @@ typedef struct {
     // Other Outputs
     float soh_percent;
     bool valid;
-    float confidence;
+    float uncertainty;
 } SOC_Estimate;
 
 extern volatile CAN_Inputs_t can_data;

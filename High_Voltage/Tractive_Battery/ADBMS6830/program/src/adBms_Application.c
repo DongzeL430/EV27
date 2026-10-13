@@ -487,7 +487,7 @@ void adBms6830_soc_run(volatile CAN_Inputs_t* can_data) {
             }
             currCap += (g_soc_estimate[cic][i].capacity_ah) * (g_soc_estimate[cic][i].soc);
             cap += g_soc_estimate[cic][i].capacity_ah;
-            uncertainty += g_soc_estimate[cic][i].confidence;
+            uncertainty += g_soc_estimate[cic][i].uncertainty;
         }
     }
 

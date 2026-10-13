@@ -48,7 +48,7 @@
 #define NUM_FAULTS 11
 
 // error_flags bits 0-4 carry the Elcon status faults (see datasheet)
-#define ELCON_FAULT_MASK 0x1F
+#define ELCON_FAULT_MASK           0x1F
 // Bit positions of the remaining faults
 #define FAULT_BIT_ELCON_TIMEOUT    5
 #define FAULT_BIT_TBP_NOT_READY    6

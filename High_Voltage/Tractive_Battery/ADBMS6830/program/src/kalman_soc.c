@@ -564,7 +564,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
         estimate->capacity_ah = kf->theta.q_nom / 3600.0f;
         estimate->soh_percent = kf->soh_est * 100.0f;
         estimate->valid = true;
-        estimate->uncertainty = sqrt(fabsf(kf->P.data[1][1]));
+        estimate->uncertainty = sqrtf(fabsf(kf->P.data[1][1]));
         return true;
     }
     // MATLAB: obj.I_prev = double(i);
@@ -835,7 +835,7 @@ bool KalmanSOC_Update(KalmanSOC* kf, const SOC_Measurement* meas, SOC_Estimate* 
     estimate->capacity_ah = kf->theta.q_nom / 3600.0f;
     estimate->soh_percent = kf->soh_est * 100.0f;
     estimate->valid = true;
-    estimate->uncertainty = sqrt(fabsf(kf->P.data[1][1]));
+    estimate->uncertainty = sqrtf(fabsf(kf->P.data[1][1]));
 
     return true;
 }

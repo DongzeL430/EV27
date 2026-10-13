@@ -71,7 +71,8 @@ void Display::refresh() {
 
     for (uint8_t page = 0; page < SCREEN_HEIGHT / PAGE_SIZE; page++) {
         if ((needsRefresh & (1 << page))) {
-            uint8_t cmd[] = {(CMD_SET_PAGE_0 | page), CMD_SET_COL_U_0, CMD_SET_COL_L_0};
+            uint8_t cmd[] = {static_cast<uint8_t>(CMD_SET_PAGE_0 | page), CMD_SET_COL_U_0,
+                             CMD_SET_COL_L_0};
             sendCommand(cmd, sizeof(cmd) / sizeof(cmd[0]));
             sendData(framebuffer[page], SCREEN_WIDTH);
         }

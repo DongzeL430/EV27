@@ -98,10 +98,10 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* hfdcan, uint32_t RxFifo0ITs)
 void bms_can_faults(SegmentData_t* PackData, TotalPack_t* TotalPack, FDCAN_HandleTypeDef* hfdcan1) {
     // Send total voltage and all BMS fault flags for all Modules
     uint8_t data1[8] = {0};
-    uint16_t temp_totalVoltage =
+    uint16_t temp_total_voltage =
         clamp_u16((TotalPack->voltage) / CAN_PACK_V_SCALE, 0.0f, CAN_U16_MAX);
-    data1[0] = (uint8_t)(temp_totalVoltage & 0xFF);
-    data1[1] = (uint8_t)(temp_totalVoltage >> 8U);
+    data1[0] = (uint8_t)(temp_total_voltage & 0xFF);
+    data1[1] = (uint8_t)(temp_total_voltage >> 8U);
     data1[2] = PackData[0].fault_flags | (TotalPack->balancing_done << 8U);
     for (int cic = 1; cic < TOTAL_MODULES; cic++) {
         data1[cic + 2] = PackData[cic].fault_flags;
@@ -148,12 +148,12 @@ void bms_can_stats(SegmentData_t* PackData, TotalPack_t* TotalPack, FDCAN_Handle
     }
     // Send min and max voltage and temp values and IDs in structure
     uint8_t data2[8];
-    data2[0] = (uint8_t)clamp_u8((((maxVoltage / 1000.0f) - CAN_CELL_V_OFFSET) / CAN_CELL_V_SCALE),
-                                 0.0f, CAN_U8_MAX);
-    data2[1] = (uint8_t)clamp_u8((((minVoltage / 1000.0f) - CAN_CELL_V_OFFSET) / CAN_CELL_V_SCALE),
-                                 0.0f, CAN_U8_MAX);
-    data2[2] = (uint8_t)clamp_u8(maxTemp * CAN_TEMP_SCALE, 0.0f, CAN_U8_MAX);
-    data2[3] = (uint8_t)clamp_u8(minTemp * CAN_TEMP_SCALE, 0.0f, CAN_U8_MAX);
+    data2[0] = clamp_u8((((maxVoltage / 1000.0f) - CAN_CELL_V_OFFSET) / CAN_CELL_V_SCALE), 0.0f,
+                        CAN_U8_MAX);
+    data2[1] = clamp_u8((((minVoltage / 1000.0f) - CAN_CELL_V_OFFSET) / CAN_CELL_V_SCALE), 0.0f,
+                        CAN_U8_MAX);
+    data2[2] = clamp_u8(maxTemp * CAN_TEMP_SCALE, 0.0f, CAN_U8_MAX);
+    data2[3] = clamp_u8(minTemp * CAN_TEMP_SCALE, 0.0f, CAN_U8_MAX);
     data2[4] = maxVoltageIdx;
     data2[5] = minVoltageIdx;
     data2[6] = maxTempIdx;

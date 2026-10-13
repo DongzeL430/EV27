@@ -263,7 +263,7 @@ void Process_Board_Data() {
         // TODO: Partial Pack Code
         // Slave IC (10 Cells) -> Maps to cell_v_mV[0..9]
         for (int i = 0; i < VOLT_PER_SLAVE; i++) {
-            float v = ((int16_t)IC[ic_master].cell.c_codes[i] * VOLTAGE_LSB) + ADBMS_CODE_OFFSET_V;
+            float v = (IC[ic_master].cell.c_codes[i] * VOLTAGE_LSB) + ADBMS_CODE_OFFSET_V;
 
             if (i == 0 || i == VOLT_PER_SLAVE - 1) {
                 v += ADBMS_END_CELL_OFFSET_V;
@@ -284,8 +284,7 @@ void Process_Board_Data() {
         // --- 3. Extract Temperatures ---
         // Slave IC (10 Temps) -> Maps to temp_C[0..9]
         for (int i = 0; i < TEMP_PER_BOARD; i++) {
-            float raw_v =
-                ((int16_t)IC[ic_master].aux.a_codes[i]) * VOLTAGE_LSB + ADBMS_CODE_OFFSET_V;
+            float raw_v = IC[ic_master].aux.a_codes[i] * VOLTAGE_LSB + ADBMS_CODE_OFFSET_V;
 
             float t = Convert_Zener_Voltage_To_Temp(raw_v);
 
@@ -474,7 +473,7 @@ void adBms6830_soc_run(volatile CAN_Inputs_t* can_data) {
     float currCap = 0;
     float cap = 0;
     float uncertainty = 0;
-    float minSoc = SOC_MIN_SEARCH_INIT;
+    float min_soc = SOC_MIN_SEARCH_INIT;
     for (int cic = 0; cic < TOTAL_MODULES; cic++) {
         if (PackSegments[cic].fault_flags & FAULT_FLAG_COMM) continue;
 
@@ -483,8 +482,8 @@ void adBms6830_soc_run(volatile CAN_Inputs_t* can_data) {
             adBms6830_soc_update(cic, i, PackSegments[cic].cell_v_mV[i] / 1000.0f,
                                  can_data->tractive_current, PackSegments[cic].temp_C[temp_idx]);
             // Calculate overall pack information
-            if (g_soc_estimate[cic][i].soc < minSoc) {
-                minSoc = g_soc_estimate[cic][i].soc;
+            if (g_soc_estimate[cic][i].soc < min_soc) {
+                min_soc = g_soc_estimate[cic][i].soc;
             }
             currCap += (g_soc_estimate[cic][i].capacity_ah) * (g_soc_estimate[cic][i].soc);
             cap += g_soc_estimate[cic][i].capacity_ah;
@@ -493,7 +492,7 @@ void adBms6830_soc_run(volatile CAN_Inputs_t* can_data) {
     }
 
     // TotalPack.soc = currCap/cap;
-    TotalPack.soc = minSoc;
+    TotalPack.soc = min_soc;
     TotalPack.capacity = cap;
     TotalPack.uncertainty = uncertainty / NUM_SERIES_CELLS;
 

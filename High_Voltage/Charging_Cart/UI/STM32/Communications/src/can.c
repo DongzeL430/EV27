@@ -16,7 +16,8 @@ void cell_data_parsing(uint32_t id, SegmentData_t* bms_data, uint8_t* rx_data) {
         ((id - CAN_ID_BMS_DATA_START) % BMS_DATA_MSGS_PER_SEGMENT) * BMS_DATA_CELLS_PER_MSG;
     for (uint8_t i = 0; i < BMS_DATA_CELLS_PER_MSG; i++) {
         bms_data[bms_module].cell_v[cell_start_index + i] = rx_data[i];
-        bms_data[bms_module].temp_C[cell_start_index + i] = rx_data[i + BMS_DATA_CELLS_PER_MSG];
+        bms_data[bms_module].temp_C[cell_start_index + i] =
+            (int8_t)rx_data[i + BMS_DATA_CELLS_PER_MSG];
     }
 }
 

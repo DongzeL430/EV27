@@ -7,8 +7,8 @@
 const float TSENSE_LOOKUP[ADC_TSENSE_LOOKUP_SIZE][2] = ADC_TSENSE_LOOKUP_DATA;
 
 // ADC Buffers
-static volatile uint16_t rawADC1Values[ADC1_CHANNEL_COUNT];
-static volatile uint16_t rawADC2Values[ADC2_CHANNEL_COUNT];
+static volatile uint16_t raw_adc1_values[ADC1_CHANNEL_COUNT];
+static volatile uint16_t raw_adc2_values[ADC2_CHANNEL_COUNT];
 // ADC Storage Structure
 ADC_Inputs_t adc_data = {0};
 
@@ -23,12 +23,12 @@ void adc_init(ADC_HandleTypeDef* hadc1, ADC_HandleTypeDef* hadc2) {
     }
 
     // ADC1 Start DMA Conversion
-    HAL_ADC_Start_DMA(hadc1, (uint32_t*)rawADC1Values, ADC1_CHANNEL_COUNT);
+    HAL_ADC_Start_DMA(hadc1, (uint32_t*)raw_adc1_values, ADC1_CHANNEL_COUNT);
 
     // CLAUDE WRITTEN Special ADC2 DMA Handler TODO: Short the single ADC2 Pin to ADC1
     //  ADC2 HAL_ADC_Start_DMA hangs on G474 when ADC1 already running
     //  due to ADRDY timing issue in ADC_Enable — start manually instead
-    HAL_DMA_Start(hadc2->DMA_Handle, (uint32_t)&hadc2->Instance->DR, (uint32_t)rawADC2Values,
+    HAL_DMA_Start(hadc2->DMA_Handle, (uint32_t)&hadc2->Instance->DR, (uint32_t)raw_adc2_values,
                   ADC2_CHANNEL_COUNT);
 
     hadc2->Instance->CR |= ADC_CR_ADEN;
@@ -80,12 +80,12 @@ float temp_convert(uint16_t adc_value) {
 // Callback to read ADCs
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     // Voltage Sense
-    adc_data.ts_vsense = rawADC1Values[0] * ADC_VSENSE_SCALAR;
-    adc_data.bat_vsense = rawADC1Values[1] * ADC_VSENSE_SCALAR;
+    adc_data.ts_vsense = raw_adc1_values[0] * ADC_VSENSE_SCALAR;
+    adc_data.bat_vsense = raw_adc1_values[1] * ADC_VSENSE_SCALAR;
 
     // Temperature Sense
-    adc_data.temp_precharge = temp_convert(rawADC1Values[2]);
-    adc_data.temp_power = temp_convert(rawADC1Values[3]);
-    adc_data.temp_vsense = temp_convert(rawADC1Values[4]);
-    adc_data.temp_ambient = temp_convert(rawADC2Values[0]);
+    adc_data.temp_precharge = temp_convert(raw_adc1_values[2]);
+    adc_data.temp_power = temp_convert(raw_adc1_values[3]);
+    adc_data.temp_vsense = temp_convert(raw_adc1_values[4]);
+    adc_data.temp_ambient = temp_convert(raw_adc2_values[0]);
 }

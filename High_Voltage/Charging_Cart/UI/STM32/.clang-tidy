@@ -27,6 +27,11 @@ HeaderFilterRegex: '.*/Charging_Cart/UI/STM32/(ChargerSM|Communications|UserInte
 ExcludeHeaderFilterRegex: '.*/(Drivers/.*|Core/Inc/stm32f0xx_[^/]*)$'
 
 CheckOptions:
+  # processUI (the encoder/menu state machine) lands at 41, over the default
+  # of 25, by design. Same limits as Tractive_Battery.
+  readability-function-cognitive-complexity.Threshold: 50
+  readability-function-cognitive-complexity.IgnoreMacros: true
+
   # Keep integer narrowing (float -> int8_t, uint8_t -> int8_t), but don't
   # flag float literals or int -> float math.
   bugprone-narrowing-conversions.WarnOnFloatingPointNarrowingConversion: false

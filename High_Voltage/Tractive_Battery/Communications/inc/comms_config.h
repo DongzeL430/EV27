@@ -19,8 +19,8 @@
 // 1. PACK GEOMETRY
 // ============================================================================
 
-#define CELLS_PER_MOD 10
-#define TEMP_PER_MOD  10
+#define CELLS_PER_MOD     10
+#define TEMP_PER_MOD      10
 // Temperature sensors stored per segment (two ADBMS boards x 10 sensors)
 #define TEMPS_PER_SEGMENT 20
 
@@ -69,7 +69,7 @@
 // CAN Init and STM Errors Bits
 #define INIT_CAN_SEND_ERROR 0
 // INIT Error
-#define INIT_ERROR 1
+#define INIT_ERROR          1
 
 // CAN IDS
 #define CAN_ID_BSM              2
@@ -103,9 +103,9 @@
 #define CAN_CELL_V_OFFSET 1.8
 #define CAN_CELL_V_SCALE  0.01
 // Temperature byte: degC * scale
-#define CAN_TEMP_SCALE 4.0f
+#define CAN_TEMP_SCALE    4.0f
 // Total pack voltage (BMS pack message): V / scale, 16 bit
-#define CAN_PACK_V_SCALE 0.01f
+#define CAN_PACK_V_SCALE  0.01f
 
 // ADC CAN Scalars
 #define PACK_VOLTAGE_SCALE 0.25f  // (600.0f-330.0f)/255.0f
@@ -129,8 +129,8 @@
 // ============================================================================
 
 // Raw DMA buffer lengths (channels converted per ADC)
-#define ADC1_CHANNEL_COUNT 5
-#define ADC2_CHANNEL_COUNT 1
+#define ADC1_CHANNEL_COUNT     5
+#define ADC2_CHANNEL_COUNT     1
 // How long to wait for ADC2 to report ready when started by hand (ms)
 #define ADC2_ENABLE_TIMEOUT_MS 200
 

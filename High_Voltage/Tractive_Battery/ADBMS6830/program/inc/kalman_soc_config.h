@@ -87,12 +87,12 @@
 // SOC used when the caller passes a negative initial SOC
 #define KALMAN_DEFAULT_INITIAL_SOC 0.3f
 // Initial measurement-model state
-#define KALMAN_INITIAL_Z 0.3f
+#define KALMAN_INITIAL_Z           0.3f
 // SOH assumed at start-up (1.0 = 100%)
-#define KALMAN_INITIAL_SOH 1.0f
+#define KALMAN_INITIAL_SOH         1.0f
 
 // Initial state covariance P (diagonal entries)
-#define KALMAN_INITIAL_P_DIAG 1e-3f
+#define KALMAN_INITIAL_P_DIAG       1e-3f
 // Initial parameter covariance P_theta (R0, Qnom)
 #define KALMAN_INITIAL_P_THETA_R0   0.1f
 #define KALMAN_INITIAL_P_THETA_QNOM 0.001f
@@ -108,7 +108,7 @@
 // ============================================================================
 
 // Minimum time step (s) for computing the current derivative
-#define KALMAN_MIN_DT_S 1e-5f
+#define KALMAN_MIN_DT_S        1e-5f
 // Innovation covariance determinants below this are treated as singular
 #define KALMAN_MIN_DETERMINANT 1e-10f
 
@@ -130,7 +130,7 @@
 // ============================================================================
 
 // Starting value when searching for the lowest cell SOC (any real SOC is below it)
-#define SOC_MIN_SEARCH_INIT 2
+#define SOC_MIN_SEARCH_INIT        2
 // Interval between periodic SOC saves to flash
 #define SOC_FLASH_SAVE_INTERVAL_MS 300000  // 5 minutes
 
@@ -138,10 +138,10 @@
 #define KALMAN_MAGIC_NUMBER 0xDEADBEEF
 
 // Sanity limits applied when validating state loaded from flash
-#define PERSIST_SOC_MIN 0.0f
-#define PERSIST_SOC_MAX 1.0f
-#define PERSIST_R0_MIN  0.0f
-#define PERSIST_R0_MAX  1.0f
+#define PERSIST_SOC_MIN         0.0f
+#define PERSIST_SOC_MAX         1.0f
+#define PERSIST_R0_MIN          0.0f
+#define PERSIST_R0_MAX          1.0f
 // Qnom must be within these factors of INITIAL_QNOM
 #define PERSIST_QNOM_MIN_FACTOR 0.5f
 #define PERSIST_QNOM_MAX_FACTOR 2.0f
@@ -166,12 +166,12 @@
 
 // Table integrity checks (BatteryModel_VerifyTable)
 // OCV may fall by at most this much between neighbouring points...
-#define OCV_MAX_DROP_V 0.1f
+#define OCV_MAX_DROP_V                   0.1f
 // ...except in the top points, where the curve is allowed to turn over
 #define OCV_MONOTONIC_EXCLUDE_TOP_POINTS 5
 // Every OCV point must lie within this range (V)
-#define OCV_VALID_MIN_V 2.0f
-#define OCV_VALID_MAX_V 5.0f
+#define OCV_VALID_MIN_V                  2.0f
+#define OCV_VALID_MAX_V                  5.0f
 
 // ============================================================================
 // R/C LOOKUP TABLE DATA (from HPPC testing)

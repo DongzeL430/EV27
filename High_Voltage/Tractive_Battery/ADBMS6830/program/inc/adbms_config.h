@@ -62,9 +62,9 @@
 // ============================================================================
 
 // Balance a cell if it is this far above the weakest cell in its segment
-#define BAL_HYSTERESIS_V 0.05f  // 5mV hysteresis
+#define BAL_HYSTERESIS_V       0.05f  // 5mV hysteresis
 // Cells at or below this voltage (mV) are treated as empty channels and ignored
-#define BAL_VALID_CELL_MIN_MV 1000
+#define BAL_VALID_CELL_MIN_MV  1000
 // Starting value for the minimum-voltage search (mV)
 #define BAL_MIN_SEARCH_INIT_MV 9999
 
@@ -78,13 +78,13 @@
 // 4. MEASUREMENT CONVERSION
 // ============================================================================
 
-#define ADBMS_VOLTAGE_LSB_V 0.00015f  // ADBMS6830 ADC LSB is 150uV
+#define ADBMS_VOLTAGE_LSB_V     0.00015f  // ADBMS6830 ADC LSB is 150uV
 // ADC codes are offset from zero by this voltage
-#define ADBMS_CODE_OFFSET_V 1.5f
+#define ADBMS_CODE_OFFSET_V     1.5f
 // The first and last cell of a segment read this much low; added back
 #define ADBMS_END_CELL_OFFSET_V 0.1f
 // Cells at or below this voltage (V) are not checked against OV/UV limits
-#define CELL_FAULT_CHECK_MIN_V 1.0f
+#define CELL_FAULT_CHECK_MIN_V  1.0f
 
 // ============================================================================
 // 5. TEMPERATURE SENSOR LOOKUP (Enepaq VTC5A)
@@ -130,10 +130,10 @@
 // Time for the GPIO ADC conversions to finish (ms)
 #define ADBMS_GPIO_CONVERSION_DELAY_MS 5
 // Time for the ADC filter to settle after starting continuous conversion (ms)
-#define ADBMS_ADC_SETTLE_DELAY_MS 8
+#define ADBMS_ADC_SETTLE_DELAY_MS      8
 
 // Configuration register defaults
-#define ADBMS_GPO_DEFAULT 0X3FF
+#define ADBMS_GPO_DEFAULT       0X3FF
 // Balancing PWM registers
 #define ADBMS_PWM_DATA_BYTES    6
 #define ADBMS_PWMA_DEFAULT_DATA {0x44, 0x44, 0x44, 0x44, 0x44, 0x44}  // Cells 1-8 at 50%

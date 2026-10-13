@@ -185,9 +185,6 @@ jobs:
           ignore: ${{ matrix.ignore }}
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' || false }}
           step-summary: true
-          # See "Resolve ARM GCC toolchain root" above — lets clang-tidy find
-          # arm-none-eabi-g++'s bundled <cstdio>/<cstdint>/etc.
-          extra-args: --gcc-toolchain=${{ steps.arm-gcc-root.outputs.root }}
 
       # clang-tidy-pr-comments doesn't run clang-tidy itself — it needs a
       # --export-fixes YAML. clang-tidy-diff.py reruns clang-tidy (same

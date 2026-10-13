@@ -91,7 +91,7 @@
 #define FAULT_MSG_UNKNOWN "UNKNOWN ERROR"
 #define FAULT_MSG_PREFIX  "ERR"
 // Character offset of the fault message on the status line
-#define FAULT_MSG_OFFSET 4
+#define FAULT_MSG_OFFSET  4
 
 // "[ \ ]" counter showing which fault is displayed out of how many
 #define FAULT_COUNT_BRACKETS        "[ \\ ]"
